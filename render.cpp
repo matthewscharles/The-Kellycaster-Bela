@@ -4,16 +4,16 @@ Charles Matthews based on ideas by John Kelly 2018
 Based on the Bela custom render.cpp
 
 
-I've created a few workarounds in here, e.g. converting incoming OSC to MIDI messages. 
+I've created a few workarounds in here, e.g. converting incoming OSC to MIDI messages.
 Not sure if there are better ways around this..still early days for me in C++
 
 */
 
 /*
- ____  _____ _        _    
-| __ )| ____| |      / \   
-|  _ \|  _| | |     / _ \  
-| |_) | |___| |___ / ___ \ 
+ ____  _____ _        _
+| __ )| ____| |      / \
+|  _ \|  _| | |     / _ \
+| |_) | |___| |___ / ___ \
 |____/|_____|_____/_/   \_\
 
 The platform for ultra-low latency audio and sensor processing
@@ -81,7 +81,7 @@ void sendDigitalMessage(bool state, unsigned int delay, void* receiverName){
 
 void Bela_messageHook(const char *source, const char *symbol, int argc, t_atom *argv){
 
-	
+
 	if(strcmp(source, "bela_setDigital") == 0){
 		// symbol is the direction, argv[0] is the channel, argv[1] (optional)
 		// is signal("sig" or "~") or message("message", default) rate
@@ -129,39 +129,39 @@ void Bela_floatHook(const char *source, float value){
 	 *  Parse float sent to receiver '.noteRate' and assign it to a global variable
 	 *  N.B. When using libpd receiver names need to be registered (see setup() function below)
 	 */
-	 
+
 	//again surely these things could be formatted as switches but I'm not quite sure how this'd work with string compare
 	if(strncmp(source, "string1", 11) == 0){
 			oscClient.sendMessageNow(oscClient.newMessage.to("/1").add(value).end());
-			
-	} else 
-	
+
+	} else
+
 		if(strncmp(source, "string2", 11) == 0){
 			oscClient.sendMessageNow(oscClient.newMessage.to("/2").add(value).end());
-			
-	}  else 
-	
+
+	}  else
+
 		if(strncmp(source, "string3", 11) == 0){
 			oscClient.sendMessageNow(oscClient.newMessage.to("/3").add(value).end());
-			
-	}  else 
-	
+
+	}  else
+
 		if(strncmp(source, "string4", 11) == 0){
 			oscClient.sendMessageNow(oscClient.newMessage.to("/4").add(value).end());
-			
-	}  else 
-	
+
+	}  else
+
 		if(strncmp(source, "string5", 11) == 0){
 			oscClient.sendMessageNow(oscClient.newMessage.to("/5").add(value).end());
-			
-	}  else 
-	
+
+	}  else
+
 		if(strncmp(source, "string6", 11) == 0){
 			oscClient.sendMessageNow(oscClient.newMessage.to("/6").add(value).end());
-			
+
 	}
-	
-	
+
+
 
 	/*********/
 
@@ -204,136 +204,137 @@ unsigned int gScopeChannelsInUse = 4;
 float* gScopeOut;
 
  void parseMessage(oscpkt::Message msg){ //from examples
-    
+
      rt_printf("received message to: %s\n", msg.addressPattern().c_str());
-    
-     int intArg;
+int intArg;
+     rt_printf(msg.popInt32(intArg).isOkNoMoreArgs());
+
 	 	if (msg.match("/calibrate").popInt32(intArg).isOkNoMoreArgs()){
          rt_printf("calibrate int %i \n", intArg);
          libpd_controlchange(0, 127, intArg);
          //libpd_programchange(0, intArg);
      }
-     
+
      //OSC to MIDI
-     
+
      //this is long-winded, can I get this into a switch format?
      //(I'm not sure about this msg.match stuff..)
      //!!check the channels, start at 0 or 1?
-     
+
      if (msg.match("/thresh/low/1").popInt32(intArg).isOkNoMoreArgs()){
          rt_printf("calibrate int %i \n", intArg);
          libpd_controlchange(3, 1, intArg);
          //libpd_programchange(0, intArg);
      }
-     
+
      if (msg.match("/thresh/low/2").popInt32(intArg).isOkNoMoreArgs()){
          rt_printf("calibrate int %i \n", intArg);
          libpd_controlchange(3, 2, intArg);
          //libpd_programchange(0, intArg);
      }
-     
+
       if (msg.match("/thresh/low/3").popInt32(intArg).isOkNoMoreArgs()){
          rt_printf("calibrate int %i \n", intArg);
          libpd_controlchange(3, 3, intArg);
          //libpd_programchange(0, intArg);
      }
-     
+
    if (msg.match("/thresh/low/4").popInt32(intArg).isOkNoMoreArgs()){
          rt_printf("calibrate int %i \n", intArg);
          libpd_controlchange(3, 4, intArg);
          //libpd_programchange(0, intArg);
      }
-     
+
         if (msg.match("/thresh/low/5").popInt32(intArg).isOkNoMoreArgs()){
          rt_printf("calibrate int %i \n", intArg);
          libpd_controlchange(3, 5, intArg);
          //libpd_programchange(0, intArg);
      }
-     
+
         if (msg.match("/thresh/low/6").popInt32(intArg).isOkNoMoreArgs()){
          rt_printf("calibrate int %i \n", intArg);
          libpd_controlchange(3, 6, intArg);
          //libpd_programchange(0, intArg);
      }
-     
+
        //this is long-winded, can I get this into a switch format?
      //!!check the channels, start at 0 or 1?
-     
+
      if (msg.match("/thresh/high/1").popInt32(intArg).isOkNoMoreArgs()){
          rt_printf("calibrate int %i \n", intArg);
          libpd_controlchange(4, 1, intArg);
          //libpd_programchange(0, intArg);
      }
-     
+
      if (msg.match("/thresh/high/2").popInt32(intArg).isOkNoMoreArgs()){
          rt_printf("calibrate int %i \n", intArg);
          libpd_controlchange(4, 2, intArg);
          //libpd_programchange(0, intArg);
      }
-     
+
       if (msg.match("/thresh/high/3").popInt32(intArg).isOkNoMoreArgs()){
          rt_printf("calibrate int %i \n", intArg);
          libpd_controlchange(4, 3, intArg);
          //libpd_programchange(0, intArg);
      }
-     
+
    if (msg.match("/thresh/high/4").popInt32(intArg).isOkNoMoreArgs()){
          rt_printf("calibrate int %i \n", intArg);
          libpd_controlchange(4, 4, intArg);
          //libpd_programchange(0, intArg);
      }
-     
+
         if (msg.match("/thresh/high/5").popInt32(intArg).isOkNoMoreArgs()){
          rt_printf("calibrate int %i \n", intArg);
          libpd_controlchange(4, 5, intArg);
          //libpd_programchange(0, intArg);
      }
-     
+
         if (msg.match("/thresh/high/6").popInt32(intArg).isOkNoMoreArgs()){
          rt_printf("calibrate int %i \n", intArg);
          libpd_controlchange(4, 6, intArg);
          //libpd_programchange(0, intArg);
      }
-     
+
         //this is long-winded, can I get this into a switch format?
      //!!check the channels, start at 0 or 1?
-     
+
      if (msg.match("/minvel/1").popInt32(intArg).isOkNoMoreArgs()){
          rt_printf("calibrate int %i \n", intArg);
          libpd_controlchange(2, 1, intArg);
          //libpd_programchange(0, intArg);
      }
-     
+
      if (msg.match("/minvel/2").popInt32(intArg).isOkNoMoreArgs()){
          rt_printf("calibrate int %i \n", intArg);
          libpd_controlchange(2, 2, intArg);
          //libpd_programchange(0, intArg);
      }
-     
+
       if (msg.match("/minvel/3").popInt32(intArg).isOkNoMoreArgs()){
          rt_printf("calibrate int %i \n", intArg);
          libpd_controlchange(2, 3, intArg);
          //libpd_programchange(0, intArg);
      }
-     
+
    if (msg.match("/minvel/4").popInt32(intArg).isOkNoMoreArgs()){
          rt_printf("calibrate int %i \n", intArg);
          libpd_controlchange(2, 4, intArg);
          //libpd_programchange(0, intArg);
      }
-     
+
         if (msg.match("/minvel/5").popInt32(intArg).isOkNoMoreArgs()){
          rt_printf("calibrate int %i \n", intArg);
          libpd_controlchange(2, 5, intArg);
          //libpd_programchange(0, intArg);
      }
-     
+
         if (msg.match("/minvel/6").popInt32(intArg).isOkNoMoreArgs()){
          rt_printf("calibrate int %i \n", intArg);
          libpd_controlchange(2, 6, intArg);
          //libpd_programchange(0, intArg);
      }
-     
+
  }
 
 bool setup(BelaContext *context, void *userData)
@@ -345,7 +346,7 @@ bool setup(BelaContext *context, void *userData)
     oscClient.setup(7563, "192.168.7.1");
     int test = rand();
 	oscClient.sendMessageNow(oscClient.newMessage.to("/note").add(test).end());
-		
+
 
     scope.setup(gScopeChannelsInUse, context->audioSampleRate);
     gScopeOut = new float[gScopeChannelsInUse];
@@ -445,7 +446,7 @@ bool setup(BelaContext *context, void *userData)
 	// open patch       [; pd open file folder(
 	void* patch = libpd_openfile(file, folder);
 	if(patch == NULL){
-		printf("Error: file %s/%s is corrupted.\n", folder, file); 
+		printf("Error: file %s/%s is corrupted.\n", folder, file);
 		return false;
 	}
 	return true;
@@ -460,13 +461,13 @@ bool setup(BelaContext *context, void *userData)
 
 void render(BelaContext *context, void *userData)
 {
-	
+
 	 while (oscServer.messageWaiting()){
-	 	
+
        parseMessage(oscServer.popMessage());
         oscClient.queueMessage(oscClient.newMessage.to("/osc-acknowledge").add(5).add(4.2f).add(std::string("OSC message received")).end());
     }
-    
+
 	int num;
 	// the safest thread-safe option to handle MIDI input is to process the MIDI buffer
 	// from the audio thread.
